@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import supabase from '../utils/supabaseClient';
 
 const LogIn = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -47,10 +48,32 @@ const LogIn = ({ navigation }) => {
     return isValid;
   }, [formData]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (validateForm()) {
-      // Aquí va tu lógica de login
-      navigation.navigate('Home');
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+  
+        // Check if there's an error from Supabase
+        if (error) {
+          console.error("Login Error:", error); // Log error for debugging
+  
+          // Display error message based on the type of error
+          if (error.message.includes("invalid login credentials")) {
+            Alert.alert("Error", "Invalid email or password.");
+          } else {
+            Alert.alert("Error", error.message); 
+          }
+          return; 
+        }
+        //navigate upon successful login
+        navigation.navigate("Home");
+      } catch (error) {
+       
+        Alert.alert("Error", error.message); 
+      }
     } else {
       Alert.alert(
         "Validation Error",
@@ -58,7 +81,10 @@ const LogIn = ({ navigation }) => {
         [{ text: "OK" }]
       );
     }
-  }, [validateForm, navigation]);
+  }, [formData, validateForm, navigation]);
+  
+  
+  
 
   const inputFields = [
     {

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import supabase from '../utils/supabaseClient';
 
 const SignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -62,9 +63,30 @@ const SignUp = ({ navigation }) => {
     return isValid;
   }, [formData]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (validateForm()) {
-      navigation.navigate('Home');
+      try {
+        // Call Supabase signUp function (create a new user)
+        const { user, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+        });
+  
+        if (error) {
+          Alert.alert("Error", error.message);
+          return;
+        }
+  
+        // If signup is successful, navigate to the Home screen or confirm the user creation
+        Alert.alert("Success", "Account created successfully!", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Home"), 
+          },
+        ]);
+      } catch (error) {
+        Alert.alert("Error", error.message); r
+      }
     } else {
       Alert.alert(
         "Validation Error",
@@ -72,7 +94,8 @@ const SignUp = ({ navigation }) => {
         [{ text: "OK" }]
       );
     }
-  }, [validateForm, navigation]);
+  }, [formData, validateForm, navigation]);
+  
 
   const inputFields = [
     {

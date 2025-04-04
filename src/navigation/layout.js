@@ -18,10 +18,32 @@ const Layout = () => {
             component={WelcomeScreen} 
             options={{ headerShown: false }} 
           />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="LogIn" component={LogIn} />
-          <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{
+              headerShown: false, 
+            }}
+          />
+          <Stack.Screen
+           name="LogIn"
+           component={LogIn}
+           options={{headerShown: false}} 
+           
+           />
+          <Stack.Screen
+           name="Home" 
+           component={Home}
+           options={{
+              headerShown: false, 
+            }} />
+
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+              headerShown: false, 
+            }} />
 
         </Stack.Navigator>
       </NavigationContainer>
